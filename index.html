@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Marcamos que sea modulo, pq vamos a importar cosas -->
+    <script type="module" src="script/main2.js"></script>
+    <!-- bootstrap bootstrap-icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!-- chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body style="height: 100vh " class="overflow-hidden">
+    <header class="d-flex justify-content-center align-items-center" style="height: 10vh">
+        <img src="./media/covid.webp" alt="" style="width: 3rem">
+        <h1 class="fw-bold px-3">Analizador Covid</h1>
+        <img src="./media/lupa.png" alt="" style="width: 3rem">
+    </header>
+    <main class="row  w-100 justify-content-between">
+
+        <!--  METODO ORDENACION -->
+        <div class="col-2 shadow d-flex flex-column align-items-center bg-white p-3">
+            <div id="cargarTodo">
+                <button id="cargarTodo-btn" class="btn btn-danger">Cargar Todo para ordenar</button>
+            </div>
+            <div id="ordenacion" class="d-none d-flex flex-column align-items-center">
+                <h4 class="fw-bold">Metodo de ordenacón</h4>
+                <form id="form">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="bubble">
+                        <label class="form-check-label fw-bold" for="flexRadioDefault1">Bubble</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="sort" checked>
+                        <label class="form-check-label fw-bold" for="flexRadioDefault2">Sort</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="seleccion" checked>
+                        <label class="form-check-label fw-bold" for="flexRadioDefault2">Seleccion</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="insercion" checked>
+                        <label class="form-check-label fw-bold" for="flexRadioDefault2">insercion</label>
+                    </div>
+                </form>
+                
+                <h4 class="fw-bold pt-5">Ordenar por:</h4>
+                <form>
+                    <select class="form-select" id="tipo_prueba" aria-label="Default select example">
+                        <option class="fw-bold" value="num_casos">Total</option>
+                        <option class="fw-bold" value="num_casos_prueba_pcr">PCR</option>
+                        <option class="fw-bold" value="num_casos_prueba_ac">AC</option>
+                        <option class="fw-bold" value="num_casos_prueba_ag">AG</option>
+                        <option class="fw-bold" value="num_casos_prueba_elisa">Elisa</option>
+                        <option class="fw-bold" value="num_casos_prueba_desconocida">Desconocido</option>
+                    </select>
+                </form>
+                
+                <h4 class="fw-bold pt-5">Ordenar:</h4>
+                <div class="d-flex ">
+                    <button id="ordenar-mayor" class="btn">
+                        <i class="bi bi-arrow-up-square-fill fs-2"></i>
+                    </button>
+                    <button id="ordenar-menor" class="btn">
+                        <i class="bi bi-arrow-down-square-fill fs-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!--  DATOS  -->
+
+        <section class="col-7 overflow-auto shadow rounded bg-white border border-2 border-dark d-none" style="height: 70vh;" id="lienzo">
+            <canvas id="myChart"></canvas>
+        </section>
+        <section class="col-7 overflow-auto shadow rounded bg-white border border-2 border-dark" style="height: 70vh;" id="datos">
+            <!-- pinto datos -->
+        </section>
+
+        <div class="col-2 shadow d-flex flex-column align-items-center justify-content-between bg-white p-3" id="tiempo_seccion">
+            <!--  TIEMPO -->
+            <h4 class="fw-bold">TIEMPO <i class="bi bi-alarm"></i></h4>
+            <p id="tiempo" class="fw-bold fs-5"></p>
+
+            <!-- GRAFICA -->
+            <div>
+                <h4 class="fw-bold">REPRESENTACION</h4>
+                <button class="btn btn-outline-primary" data-tipo="tabla">Tabla</button>
+                <button class="btn btn-outline-primary btn-chart" data-tipo="bar">Barras</button>
+                <button class="btn btn-outline-primary btn-chart" data-tipo="doughnut">Doughnut</button>
+                <button class="btn btn-outline-primary btn-chart" data-tipo="line">Lineas</button>
+                <button class="btn btn-outline-primary btn-chart" data-tipo="radar">Radar</button>                
+            </div>
+        </div>
+        </div>
+    </main>
+
+        <!-- PAGINACION -->
+        <nav aria-label="..." class="d-flex justify-content-center">
+            <ul class="pagination p-2 bg-white shadow" id="paginas">
+                <li class="page-item">
+                    <button id="previous" class="page-link">Previous</button>
+                </li>
+                <li class="page-item" id="next">
+                    <button class="page-link">Next</button>
+                </li>
+            </ul>
+        </nav>
+
+    <!--    OLA     -->
+    <div id="ola" class="d-flex">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#0099ff" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,202.7C384,192,480,160,576,128C672,96,768,64,864,85.3C960,107,1056,181,1152,186.7C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" id="olaDos">
+            <path fill="#0099ff" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,202.7C384,192,480,160,576,128C672,96,768,64,864,85.3C960,107,1056,181,1152,186.7C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</body>
+</html>
+<style>
+    body{
+        background-color: #f1f1f1;
+    }
+    #ola{
+        position: absolute;
+        bottom: -7rem;
+        z-index: -5;
+        width: 200%;
+        left: 0%;
+        animation: mover 80s infinite alternate-reverse;
+    }
+    #olaDos{
+        transform: rotateY(180deg);
+    }
+    @keyframes mover {
+        0%{
+            left: -100%;
+        }100%{
+            left: 0%;
+        }
+    }
+</style>
