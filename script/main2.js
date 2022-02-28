@@ -1,12 +1,16 @@
 import {Ajax} from "./Ajax.js";
 import {Paginacion} from "./paginacion.js";
 import {bubble, sort, seleccion, insercion} from "./Utils.js";
-import * as Represent from "./dataRepresent.js";
+import {Represent} from "./dataRepresent.js";
 
 let ajax = new Ajax();
 
 
 window.onload = ()=>{
+
+    let param = document.getElementById("lienzo");
+    let represent = new Represent(param);
+
 
     let nextBtn = document.getElementById("next");
     let prevBtn = document.getElementById("previous");
@@ -14,8 +18,19 @@ window.onload = ()=>{
     let paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
 
     let datos;
+    /* ^-^-^-^-^-^-^-^-^-^-^-^-^- CAMBIAR EL TIPO DE REPRESENTACION  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
+
+    let prueba = document.getElementsByClassName("btn-represent-chart")
+
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- BUSCAR Y APLICAR METODOS ORDENACION ^-^-^-^-^-^-^-^-^-^-^-^-^- */
+
+    //Cambiamos el modo a cargar todos los datos para ordenar
+    document.getElementById("cargarTodo-btn").addEventListener("click", ()=>{
+        document.getElementById("cargarTodo").classList.add("d-none");
+        document.getElementById("ordenacion").classList.remove("d-none");
+        recuperarTodosDatos();
+    })
 
     //Por el tipo de prueba que queramos ordenar, por defecto va a ser num_casos
     let tipoPrueba="num_casos";
@@ -55,46 +70,23 @@ window.onload = ()=>{
         }
     }
 
+    async function recuperarParteDatos(datoAct, cantDatos){
+        //Una vez recibido los datos
+        let datos = await ajax.parte(datoAct, cantDatos);
+        //Represent.representarDatos2(datos);
+        represent.represent("bar", datos);
 
-
-    let cambioTipoGrafica = () =>{
-        //Añadimos listeners a los botones de cambiar tipo
-        let btns = document.getElementsByClassName("btn-chart");
-    
-        for (const btn of btns) {
-            btn.addEventListener("click", ()=>{
-                //Actualizamos el tipo en el chart y lo guardamos en una variable para cuando pasemos
-                //de pagina, que siga el mismo tipo de grafica
-                myChart.data.datasets[0].type=btn.attributes["data-tipo"].value;
-                chartType=btn.attributes["data-tipo"].value;
-                myChart.update();
-            } )
-    
+        for (let i = 0; i < prueba.length; i++) {
+            prueba[i].addEventListener("click", (e)=>{
+                console.log(e.target["attributes"]["data-tipo"])
+                represent.represent(e.target["attributes"]["data-tipo"].value, datos);
+            });
         }
     
     }
 
-
-    //Cambiamos el modo a cargar todos los datos para ordenar
-    document.getElementById("cargarTodo-btn").addEventListener("click", ()=>{
-        document.getElementById("cargarTodo").classList.add("d-none");
-        document.getElementById("ordenacion").classList.remove("d-none");
-        recuperarTodosDatos();
-    })
-
-
-
-    async function recuperarParteDatos(datoAct, cantDatos){
-        //Una vez recibido los datos
-        let datos = await ajax.parte(datoAct, cantDatos);
-        Represent.representarDatos2(datos);
-
-        //Añadimos la funcionalidad de cambiar de tipo de grafica
-        //cambioTipoGrafica();
-    }
-
     let allDataRepresentation = (datoAct, cantDatos) =>{
-        Represent.representarDatos2(datos.slice(datoAct, datoAct+cantDatos))
+        represent.represent("table",datos.slice(datoAct, datoAct+cantDatos))
     }
 
     //Esperamos a recuperar todos los datos para poder hacer cosas
@@ -106,7 +98,6 @@ window.onload = ()=>{
 
 
         document.getElementById("ordenar-mayor").addEventListener("click", (e)=>{
-            console.log("estoy ordenando")
             let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
             datos = ordenar(foo, datos);
         });
@@ -119,6 +110,6 @@ window.onload = ()=>{
     }
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- MAIN ^-^-^-^-^-^-^-^-^-^-^-^-^- */
-    recuperarParteDatos(paginacion.datoAct, paginacion.cantDatos);
+    recuperarParteDatos(paginacion.currentData, paginacion.amoutDataPage);
 
 }

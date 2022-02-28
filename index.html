@@ -5,13 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <!-- Marcamos que sea modulo, pq vamos a importar cosas -->
-    <script type="module" src="script/main2.js"></script>
     <!-- bootstrap bootstrap-icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <!-- chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Marcamos que sea modulo, pq vamos a importar cosas -->
+    <script type="module" src="script/main2.js"></script>
 
 </head>
 <body style="height: 100vh " class="overflow-hidden">
@@ -74,12 +74,8 @@
 
         <!--  DATOS  -->
 
-        <section class="col-7 overflow-auto shadow rounded bg-white border border-2 border-dark d-none" style="height: 70vh;" id="lienzo">
-            <canvas id="myChart"></canvas>
-        </section>
-        <section class="col-7 overflow-auto shadow rounded bg-white border border-2 border-dark" style="height: 70vh;" id="datos">
-            <!-- pinto datos -->
-        </section>
+        <section class="col-7 overflow-auto shadow rounded bg-white border border-2 border-dark" style="height: 70vh;" id="lienzo"></section>
+
 
         <div class="col-2 shadow d-flex flex-column align-items-center justify-content-between bg-white p-3" id="tiempo_seccion">
             <!--  TIEMPO -->
@@ -89,11 +85,11 @@
             <!-- GRAFICA -->
             <div>
                 <h4 class="fw-bold">REPRESENTACION</h4>
-                <button class="btn btn-outline-primary" data-tipo="tabla">Tabla</button>
-                <button class="btn btn-outline-primary btn-chart" data-tipo="bar">Barras</button>
-                <button class="btn btn-outline-primary btn-chart" data-tipo="doughnut">Doughnut</button>
-                <button class="btn btn-outline-primary btn-chart" data-tipo="line">Lineas</button>
-                <button class="btn btn-outline-primary btn-chart" data-tipo="radar">Radar</button>                
+                <button class="btn btn-outline-primary btn-represent-table" data-tipo="tabla">Tabla</button>
+                <button class="btn btn-outline-primary btn-represent-chart" data-tipo="bar">Barras</button>
+                <button class="btn btn-outline-primary btn-represent-chart" data-tipo="doughnut">Doughnut</button>
+                <button class="btn btn-outline-primary btn-represent-chart" data-tipo="line">Lineas</button>
+                <button class="btn btn-outline-primary btn-represent-chart" data-tipo="radar">Radar</button>                
             </div>
         </div>
         </div>

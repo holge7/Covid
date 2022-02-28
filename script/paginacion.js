@@ -1,95 +1,100 @@
-/**
- * 
- * 
- *              PAGINACIÓN Y MUESTRA DE DATOS
- * 
- *  Variables
- * 
- *   @datoAct        Indice de los datos
- * 
- *   @cantDatos      Cantidad de datos que se muestran en cada pagina
- * 
- *   @numPaginas     Cantidad de botones disponibles para pasar pagina
- * 
- *   @paginacionAct  Parte de la paginacion (botones) en la que nos encontramos
- * 
- * 
- *  Funciones
- * 
- *  @representarDatos 
- * 
- */
+import { createDom } from "./Utils.js";
 
 export class Paginacion{
 
-    constructor(nextBtn, previousBtn, paginas, callback){
-        this.datoAct = 0;
-        this.cantDatos = 19;
-        this.numPaginas = 10;
-        this.paginacionAct = 0;
+    /**
+     *   Default
+     *   @currentData    Index of data
+     *   @amoutDataPage  Amount of data displayed on each page
+     *   @viewablePages  Amount btns availables for turn page
+     *   @offsetPage     Part of the page (buttons) in which we find ourselves
+     * 
+     *   Param
+     *   @param {Element} nextBtn     Next page button 
+     *   @param {Element} previousBtn Previoues page button
+     *   @param {Element} pages       Container in which the visible pages are painted
+     *   @param {Function} callback   Function that we execute when we change page 
+     * 
+     */
+
+    constructor(nextBtn, previousBtn, pages, callback){
+        //Default
+        this.currentData = 0;
+        this.amoutDataPage = 19;
+        this.viewablePages = 10;
+        this.offsetPage = 0;
+        //Param
         this.nextBtn = nextBtn;
         this.previousBtn = previousBtn;
-        this.paginas = paginas;
+        this.pages = pages;
         this.callback = callback;
-        this.cambioPagina();
-        this.pintarPaginas();
-        this.pintarPaginas(false);
+
+        this.turnPage();
+        this.drawViewablePages();
+        this.drawViewablePages(false);
+    }
+    
+    /**
+     * Add listeners to next and previous page buttons
+     */
+
+    turnPage(){
+        this.nextBtn.addEventListener("click", ()=> this.drawViewablePages());
+        this.previousBtn.addEventListener("click", ()=> this.drawViewablePages(false));
     }
 
-    cambioPagina(){
-        this.nextBtn.addEventListener("click", ()=> this.pintarPaginas());
-        this.previousBtn.addEventListener("click", ()=> this.pintarPaginas(false));
-    }
+    /**
+     * Create the btns to navigate between the differents pages
+     * 
+     * @returns {Array} with the differents buttons
+     */
+    creaBtnsPage(){
+        let btns = [];
 
-    creaBtnsPagina(){
-        let res = [];
-
-        for (let i = this.datoAct; i < this.datoAct+this.numPaginas; i++) {
-            let li = document.createElement("li");
-            li.classList.add("page-item", "page");
+        for (let i = this.currentData; i < this.currentData+this.viewablePages; i++) {
+            let li = createDom({element:"li", clas:["page-item", "page"]});
+            let btn = createDom({element:"button", clas:["page-link"], content:i});
             
-            let btn = document.createElement("button");
-            btn.classList.add("page-link");
-            btn.textContent = i;
-            
+            //When we do click in any btn, the current data is actualizate and the callback
+            //is ejecute with the new numbers to limit
             btn.addEventListener("click", ()=>{
-                this.datoAct=i*this.cantDatos;
-                this.callback(this.datoAct, this.cantDatos)
+                this.currentData=i*this.amoutDataPage;
+                this.callback(this.currentData, this.amoutDataPage)
             });
             
             li.appendChild(btn)
-            res.push(li)
+            btns.push(li)
         }
 
-        return res;
+        return btns;
     }
 
-    pintarPaginas(direccion=true){
-        let paginas = document.getElementById("paginas");
+    /**
+     * Draw the visible pages
+     * 
+     * @param {boolean} direction true  => we are moving forward
+     *                            false => we are going backwards
+     */
+    drawViewablePages(direction=true){
 
-        //Guardamos todos los los botones que tiene la paginacion en un array y posteriormente los borramos
-        let borrar = [];
-        for (let i = 0; i < paginas.children.length; i++) {
-            if (paginas.children[i].classList.contains("page")) {
-                borrar.push(paginas.children[i]);
+        //Delete the previous page buttons
+        let clear = [];
+        for (let i = 0; i < this.pages.children.length; i++) {
+            if (this.pages.children[i].classList.contains("page")) {
+                clear.push(this.pages.children[i]);
             }
         }
-        for (const key in borrar) {
-            paginas.removeChild(borrar[key]);
-        }
+        clear.map((e)=>this.pages.removeChild(e));
 
-        if (direccion) {
-            this.paginacionAct += this.numPaginas;
-        }else{
-            this.paginacionAct -= this.numPaginas;
-        }
-        this.datoAct = this.paginacionAct;
+        //Look in which direction we want to go
+        if (direction) this.offsetPage += this.viewablePages;
+        else this.offsetPage -= this.viewablePages;
+        
+        this.currentData = this.offsetPage;
 
-        let res = this.creaBtnsPagina();
-
-        for (let i = 0; i < res.length; i++) {
-            this.paginas.insertBefore(res[i], this.nextBtn);
-        }
+        //We oreder the corresponding btns and paint them
+        let btns = this.creaBtnsPage();
+        btns.map((btn)=>this.pages.insertBefore(btn, this.nextBtn));
 
     }
 
