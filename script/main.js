@@ -44,9 +44,12 @@ window.onload = ()=>{
         tableBtn.addEventListener("click", ()=>{
             typeRepresentation = "table";
             represent.represent(typeRepresentation, data);
-        })
+            addListenersFocusBtns();
+        });
 
     }
+
+
 
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- BUSCAR Y APLICAR METODOS ORDENACION ^-^-^-^-^-^-^-^-^-^-^-^-^- */
@@ -66,9 +69,6 @@ window.onload = ()=>{
         }
     }
 
-    document.getElementById("tipo_prueba").addEventListener("change", (e)=>{
-        tipoPrueba = e.target.value;
-    });
 
 
     //La propiedad orden va a ser si queremos que se ordene de < o de >
@@ -106,8 +106,7 @@ window.onload = ()=>{
         }
     }
 
-    let addOptionsSelect = async() => {
-        let select = document.getElementById("comparar");
+    let addOptionsSelectCompare = async(select) => {
         let isos = await ajax.isos();
         let option;
         isos.map((iso)=>{
@@ -116,14 +115,28 @@ window.onload = ()=>{
                 select.appendChild(option);
                 option.addEventListener("click", async(e)=>{
                     let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
-                    datos = [datos];
                     datos.push(newData)
-                    console.log(datos)
-
+                    represent.represent("focus", datos);
                 });
             }
         });
+    }
 
+    let addOptionsSelectShow = async(select) => {
+        let isos = await ajax.isos();
+        let option;
+        isos.map((iso)=>{
+            for (const key in iso) {
+                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
+                select.appendChild(option);
+                option.addEventListener("click", async(e)=>{
+                    //Tengo que crear un nuevo metodo ajax, para traerme todos los datos de una iso
+                    let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
+                    console.log(newData);
+                    represent.represent("focus", newData);
+                });
+            }
+        });
     }
     
     let changeLayoutPagination = async() => {
@@ -142,13 +155,13 @@ window.onload = ()=>{
                 changeLayoutPagination();
                 paginacion.clickSimulation();
             })
-            await addOptionsSelect();
+            await addOptionsSelectCompare(document.getElementById("comparar"));
         }
     }
 
 
     let test;
-    let addListenersFocusBtns=() =>{
+    function addListenersFocusBtns(){
         let btns = document.querySelectorAll(".represent");
         let target;
         for (let i = 0; i < btns.length; i++) {
@@ -157,8 +170,7 @@ window.onload = ()=>{
                 target = e.target.getAttribute("metadata").split("/");
                 test = target[1];
                 target = target[0];
-                datos = await ajax.seleccion(target, test);
-                console.log(datos)
+                datos = [await ajax.seleccion(target, test)];
                 represent.represent("focus", datos);
                 changeLayoutPagination();
             });
@@ -183,17 +195,14 @@ window.onload = ()=>{
             paginacion.clickSimulation();
         });
     }
-    addListenersSort2();
-
-
 
     async function recuperarParteDatos(datoAct, cantDatos){
         //Una vez recibido los datos
         let datos = await ajax.parte(datoAct, cantDatos);
         represent.represent(typeRepresentation, datos);
         changeRepresent(datos);
-        addListenersFocusBtns()
-        
+        addListenersFocusBtns();
+        addOptionsSelectShow(document.getElementById("mostrar-datos-de-select"));
     }
     
     function allDataRepresentation (datoAct, cantDatos){
@@ -203,8 +212,20 @@ window.onload = ()=>{
         addListenersFocusBtns();
     }
 
-
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- MAIN ^-^-^-^-^-^-^-^-^-^-^-^-^- */
-    paginacion.clickSimulation();
 
+    document.getElementById("reestablecerDatos").addEventListener("click", ()=>{
+        paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
+        paginacion.clickSimulation();
+    });
+
+    document.getElementById("tipo_prueba").addEventListener("change", (e)=>{
+        tipoPrueba = e.target.value;
+    });
+
+
+    
+    addListenersSort2();
+    paginacion.clickSimulation();
+    
 }

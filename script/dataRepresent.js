@@ -24,26 +24,25 @@ export class Represent{
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- AUX METHODS ^-^-^-^-^-^-^-^-^-^-^-^-^- */
 
     extractTest(datas){
-        let test = {};//object with amout of all diferent test
-
-        datas.map((data)=>{
-            for (const key in data) {
-
-                //If it is statistical data and it is not the amount of all
-                if (key.match(/^num.*/) && key!='num_casos') {
-                    //Try to enter the data and if it is the first time we do it
-                    // we haver to create it before
-                    try {
-                        test[key].push(data[key]);
-                    } catch (error) {
-                        test[key]=[];
-                        test[key].push(data[key]);
+        let test = [];//object with amout of all diferent test
+        for (let i = 0; i < datas.length; i++) {
+            datas[i].map((data)=>{
+                for (const key in data) {
+                    //If it is statistical data and it is not the amount of all
+                    if (key.match(/^num.*/) && key!='num_casos') {
+                        //Try to enter the data and if it is the first time we do it
+                        // we haver to create it before
+                        try {
+                            test[data["iso"]].push(data[key]);
+                        } catch (error) {
+                            test[data["iso"]]=[];
+                            test[data["iso"]].push(data[key]);
+                        }
                     }
+                    
                 }
-    
-            }
-        });
-
+            });
+        }
         return test;
     }
 
@@ -100,29 +99,49 @@ export class Represent{
      * @param {string} type type of chart
      */
 
-    chartRepresent(data, type){
-        let test = this.extractTest(data)
+    chartRepresent(datas, type){
+        let test = {};//object with amout of all diferent test
+
+        datas.map((data)=>{
+            for (const key in data) {
+
+                //If it is statistical data and it is not the amount of all
+                if (key.match(/^num.*/) && key!='num_casos') {
+                    //Try to enter the data and if it is the first time we do it
+                    // we haver to create it before
+                    try {
+                        test[key].push(data[key]);
+                    } catch (error) {
+                        test[key]=[];
+                        test[key].push(data[key]);
+                    }
+                }
+    
+            }
+        });
 
         //creating the label with iso cod
-        let label = data.map(dat => dat.ccaa_iso);
+        let label = datas.map(dat => dat.ccaa_iso);
     
         //creating the datasets
         let dataSet = [];
+        let aux=0;
         for (const key in test) {
             dataSet.push({
                 type: type,
                 label: key,
                 data: test[key],
-                backgroundColor: this.coloresA,
-                borderColor: this.colores,
-                borderWidth: 1,
-                fill:true,
-                borderWidth: 5,
+                backgroundColor: type=="bar" ? this.coloresA : this.coloresA[aux],
+                borderColor: type=="bar" ? this.colores : this.colores[aux],
+                borderWidth: 2,
+                fill: type=="doughnut" ? true : false,
+                radius: 0,
             });
+            aux+=3;
         }
 
         //Extract the dates and drop if it are repeated
-        let date = data.map(data => data["fecha"]);
+        let date = datas.map(data => data["fecha"]);
         date = date.filter((dat, i) => date.indexOf(dat) == i);
         if (date.length>0) date = date.join(' / ') ;
     
@@ -135,42 +154,65 @@ export class Represent{
         this.myChart.update();
     }
 
-    chartRepresentFocus(data){
-        let test = this.extractTest(data)
+    chartRepresentFocus(datas){
+        let test = [];//object with amout of all diferent test
+        for (let i = 0; i < datas.length; i++) {
+            datas[i].map((data)=>{
+                for (const key in data) {
+                    //If it is statistical data and it is not the amount of all
+                    if (key.match(/^num.*/) && key!='num_casos') {
+                        //Try to enter the data and if it is the first time we do it
+                        // we haver to create it before
+                        try {
+                            test[data["iso"]].push(data[key]);
+                        } catch (error) {
+                            test[data["iso"]]=[];
+                            test[data["iso"]].push(data[key]);
+                        }
+                    }
+                    
+                }
+            });
+        }
 
         //creating the label with iso cod
-        let label = data.map(dat => dat.fecha);
-    
+        let label;
+        for (const key in datas) {
+            label = datas[key].map(dat => dat.fecha);
+        }
+
+        let aux=0;
         
         //creating the datasets
         let dataSet = [];
-        //for (let i = 0; i < data.length; i++) {
-            for (const key in test) {
-                dataSet.push({
-                    type: "line",
-                    label: data[0]["iso"],
-                    data: test[key],
-                    backgroundColor: this.coloresA,
-                    borderColor: this.colores[1],
-                    borderWidth: 1,
-                    fill:false,
-                    borderWidth: 2,
-                    radius: 0,
-                });
-            }
-        //}
-
-        //Extract the dates and drop if it are repeated
-        let date = data.map(data => data["fecha"]);
-        date = date.filter((dat, i) => date.indexOf(dat) == i);
-        if (date.length>0) date = date.join(' / ') ;
+        for (const key in test) {
+            dataSet.push({
+                type: "line",
+                label: key,
+                data: test[key],
+                backgroundColor: this.coloresA[aux],
+                borderColor: this.colores[aux],
+                fill:false,
+                borderWidth: 2,
+                radius: 0,
+            });
+            aux+=3;
+        }
     
         let dataChart = {
             labels:label,
             datasets: dataSet,
         }
 
-        this.totalChar(dataChart, date);
+        let testType;
+
+        for (const key in datas[0][0]) {
+            if (key.match(/^num.*/)){
+                testType=key;
+            }
+        }
+
+        this.totalChar(dataChart, "Total: "+testType);
         this.myChart.update();
     }
 

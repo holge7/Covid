@@ -72,6 +72,8 @@
                 <!--  TIEMPO -->
                 <h4 class="fw-bold">TIEMPO <i class="bi bi-alarm"></i></h4>
                 <p id="tiempo" class="fw-bold fs-5"></p>
+                <button id="reestablecerDatos" class="btn btn-primary">Reestablecer Datos</button>
+
             </div>
         </div>
 
@@ -82,7 +84,7 @@
 
         <div class="col-2 shadow d-flex flex-column align-items-center justify-content-between bg-white p-3" id="tiempo_seccion">
             <!-- GRAFICA -->
-            <div>
+            <div class="d-flex flex-column">
                 <h4 class="fw-bold">REPRESENTACION</h4>
                 <button class="btn btn-outline-primary btn-represent-table" data-tipo="tabla">Tabla</button>
                 <button class="btn btn-outline-primary btn-represent-chart" data-tipo="bar">Barras</button>
@@ -90,6 +92,13 @@
                 <button class="btn btn-outline-primary btn-represent-chart" data-tipo="line">Lineas</button>
                 <button class="btn btn-outline-primary btn-represent-chart" data-tipo="radar">Radar</button>                
             </div>
+
+            <!-- VER DATOS DE -->
+            <div class="p-2 w-100 d-flex flex-column justify-content-between">
+                <h4 class="fw-bold">Mostrar datos de:</h4>
+                <select class="form-select" id="mostrar-datos-de-select"></select>
+            </div>
+
         </div>
         </div>
     </main>
