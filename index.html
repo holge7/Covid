@@ -25,9 +25,9 @@
         <!--  METODO ORDENACION -->
         <div class="col-2 shadow d-flex flex-column align-items-center bg-white p-3">
             <div id="cargarTodo">
-                <button id="cargarTodo-btn" class="btn btn-danger">Cargar Todo para ordenar</button>
+                <button id="cargarTodo-btn" class="btn btn-danger d-none">Cargar Todo para ordenar</button>
             </div>
-            <div id="ordenacion" class="d-none d-flex flex-column align-items-center">
+            <div id="ordenacion" class=" d-flex flex-column align-items-center">
                 <h4 class="fw-bold">Metodo de ordenacón</h4>
                 <form id="form">
                     <div class="form-check">
@@ -95,7 +95,7 @@
     </main>
 
         <!-- PAGINACION -->
-        <nav aria-label="..." class="d-flex justify-content-center">
+        <nav aria-label="..." id="pagination" class="d-flex justify-content-center">
             <ul class="pagination p-2 bg-white shadow" id="paginas">
                 <li class="page-item">
                     <button id="previous" class="page-link">Previous</button>
@@ -104,6 +104,15 @@
                     <button class="page-link">Next</button>
                 </li>
             </ul>
+            <div id="focus" class="p-2 bg-white shadow w-50 d-flex justify-content-between d-none">
+                <button id="focus-off" class="btn-primary btn ">Mostrar registros</button>
+                <div class="d-flex border w-50">
+                    <p class="w-50">Comparar con:</p>
+                    <select class="form-select" id="comparar">
+               
+                    </select>
+                </div>
+            </div>
         </nav>
 
     <!--    OLA     -->

@@ -21,43 +21,9 @@ export class Represent{
         this.myChart=undefined;
     }
 
+    /* ^-^-^-^-^-^-^-^-^-^-^-^-^- AUX METHODS ^-^-^-^-^-^-^-^-^-^-^-^-^- */
 
-    /**
-     * 
-     * @param {string} format acepts (table, bar, doughnut, line or radar)
-     * @param {array} data array of object with the data to represent
-     */
-    represent(format, data){
-
-        switch (format) {
-            case "table":
-                this.state=false;
-                this.canvas.innerHTML="";
-                this.tableRepresent(data);
-                break;
-        
-            default:
-                if (!this.state) {
-                    this.canvas.innerHTML="";
-                    let objectCanvas = createDom({element:"canvas", atributes:{"id":"myChart"}})
-                    this.canvas.appendChild(objectCanvas);
-                    this.ctx = objectCanvas.getContext("2d");
-                }
-                this.chartRepresent(data, format);
-                this.state=true
-                break;
-        }
-
-    }
-
-
-    /**
-     * 
-     * @param {array} datas  array of object with the data to represent
-     * @param {string} type type of chart
-     */
-
-    chartRepresent(datas, type){
+    extractTest(datas){
         let test = {};//object with amout of all diferent test
 
         datas.map((data)=>{
@@ -78,10 +44,69 @@ export class Represent{
             }
         });
 
-        //create the label
-        let label = datas.map(dat => dat.ccaa_iso);
+        return test;
+    }
+
+
+    /**
+     * 
+     * @param {string} format acepts (table, bar, doughnut, line or radar)
+     * @param {array} data array of object with the data to represent
+     */
+    represent(format, data){
+
+        switch (format) {
+            case "table":
+                this.state=false;
+                this.canvas.innerHTML="";
+                this.tableRepresent(data);
+                break;
+
+            case "bar":
+            case "doughnut":
+            case "line":
+            case "radar":
+                if (!this.state) {
+                    this.canvas.innerHTML="";
+                    let objectCanvas = createDom({element:"canvas", atributes:{"id":"myChart"}})
+                    this.canvas.appendChild(objectCanvas);
+                    this.ctx = objectCanvas.getContext("2d");
+                }
+                this.chartRepresent(data, format);
+                this.state=true
+                break;
+
+            case "focus":
+                if (!this.state) {
+                    this.canvas.innerHTML="";
+                    let objectCanvas = createDom({element:"canvas", atributes:{"id":"myChart"}})
+                    this.canvas.appendChild(objectCanvas);
+                    this.ctx = objectCanvas.getContext("2d");
+                }
+                this.chartRepresentFocus(data);
+                this.state=true
+                break;
+            default:
+                console.log("ERROR EN SWITCH DATA REPRESENT");
+                break;
+        }
+
+    }
+
+
+    /**
+     * 
+     * @param {array} datas  array of object with the data to represent
+     * @param {string} type type of chart
+     */
+
+    chartRepresent(data, type){
+        let test = this.extractTest(data)
+
+        //creating the label with iso cod
+        let label = data.map(dat => dat.ccaa_iso);
     
-        //create the datasets
+        //creating the datasets
         let dataSet = [];
         for (const key in test) {
             dataSet.push({
@@ -95,21 +120,60 @@ export class Represent{
                 borderWidth: 5,
             });
         }
-    
+
         //Extract the dates and drop if it are repeated
-        let date = datas.map(data => data["fecha"]);
+        let date = data.map(data => data["fecha"]);
         date = date.filter((dat, i) => date.indexOf(dat) == i);
         if (date.length>0) date = date.join(' / ') ;
     
-        let data = {
+        let dataChart = {
             labels:label,
             datasets: dataSet,
         }
 
-        this.totalChar(data, date);
+        this.totalChar(dataChart, date);
         this.myChart.update();
-    
     }
+
+    chartRepresentFocus(data){
+        let test = this.extractTest(data)
+
+        //creating the label with iso cod
+        let label = data.map(dat => dat.fecha);
+    
+        
+        //creating the datasets
+        let dataSet = [];
+        //for (let i = 0; i < data.length; i++) {
+            for (const key in test) {
+                dataSet.push({
+                    type: "line",
+                    label: data[0]["iso"],
+                    data: test[key],
+                    backgroundColor: this.coloresA,
+                    borderColor: this.colores[1],
+                    borderWidth: 1,
+                    fill:false,
+                    borderWidth: 2,
+                    radius: 0,
+                });
+            }
+        //}
+
+        //Extract the dates and drop if it are repeated
+        let date = data.map(data => data["fecha"]);
+        date = date.filter((dat, i) => date.indexOf(dat) == i);
+        if (date.length>0) date = date.join(' / ') ;
+    
+        let dataChart = {
+            labels:label,
+            datasets: dataSet,
+        }
+
+        this.totalChar(dataChart, date);
+        this.myChart.update();
+    }
+
 
     /**
      * Assign a chart object ot the property myChart
@@ -124,6 +188,7 @@ export class Represent{
         this.myChart = new Chart(this.ctx, {
             data: data,
             options: {
+                
                 plugins: {
                     title: {
                         display: true,
@@ -140,7 +205,6 @@ export class Represent{
     }
 
     
-
     /**
      * Represents the data in a format of table
      * 

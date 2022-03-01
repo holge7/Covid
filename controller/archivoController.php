@@ -16,4 +16,8 @@
         public function seleccion($target, $test){
             echo json_encode(Archivo::seleccion($target, $test));
         }
+
+        public function isos(){
+            echo json_encode(Archivo::isos());
+        }
     }

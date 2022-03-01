@@ -2,6 +2,7 @@ import {Ajax} from "./Ajax.js";
 import {Paginacion} from "./paginacion.js";
 import {bubble, sort, seleccion, insercion} from "./Utils.js";
 import {Represent} from "./dataRepresent.js";
+import {createDom} from "./Utils.js";
 
 let ajax = new Ajax();
 
@@ -54,13 +55,6 @@ window.onload = ()=>{
         document.getElementById("tiempo").innerHTML=`${time}ms`;
     }
 
-    //Cambiamos el modo a cargar todos los datos para ordenar
-    document.getElementById("cargarTodo-btn").addEventListener("click", ()=>{
-        document.getElementById("cargarTodo").classList.add("d-none");
-        document.getElementById("ordenacion").classList.remove("d-none");
-        recuperarTodosDatos();
-    })
-
     //Por el tipo de prueba que queramos ordenar, por defecto va a ser num_casos
     let tipoPrueba="num_casos";
 
@@ -112,37 +106,84 @@ window.onload = ()=>{
         }
     }
 
-    let addListenersSort = () => {
-        document.getElementById("ordenar-mayor").addEventListener("click", (e)=>{
-            let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
-            datos = ordenar(foo, datos);
-            paginacion.clickSimulation();
+    let addOptionsSelect = async() => {
+        let select = document.getElementById("comparar");
+        let isos = await ajax.isos();
+        let option;
+        isos.map((iso)=>{
+            for (const key in iso) {
+                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
+                select.appendChild(option);
+                option.addEventListener("click", async(e)=>{
+                    let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
+                    datos = [datos];
+                    datos.push(newData)
+                    console.log(datos)
+
+                });
+            }
         });
+
+    }
     
-        document.getElementById("ordenar-menor").addEventListener("click", (e)=>{
-            let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
-            datos = ordenar(foo, datos, false);
-            paginacion.clickSimulation();
-        });
+    let changeLayoutPagination = async() => {
+        let pages = document.getElementById("paginas");
+        let focus = document.getElementById("focus");
+        //Ponemos paginacion
+        if (pages.classList.contains("d-none")) {
+            pages.classList.remove("d-none");
+            focus.classList.add("d-none");
+        }
+        //Quitamos paginacion
+        else{
+            pages.classList.add("d-none");
+            focus.classList.remove("d-none")
+            document.getElementById("focus-off").addEventListener("click", ()=>{
+                changeLayoutPagination();
+                paginacion.clickSimulation();
+            })
+            await addOptionsSelect();
+        }
     }
 
-    let prueba=() =>{
-        let prueba = document.querySelectorAll(".represent");
-        let target, test;
-        console.log(prueba)
-        for (let i = 0; i < prueba.length; i++) {
-            console.log("AAAAAAAAAAAAAA")
-            prueba[i].addEventListener("click", async (e)=>{
+
+    let test;
+    let addListenersFocusBtns=() =>{
+        let btns = document.querySelectorAll(".represent");
+        let target;
+        for (let i = 0; i < btns.length; i++) {
+
+            btns[i].addEventListener("click", async (e)=>{
                 target = e.target.getAttribute("metadata").split("/");
                 test = target[1];
                 target = target[0];
                 datos = await ajax.seleccion(target, test);
                 console.log(datos)
-                paginacion.callback=allDataRepresentation;
+                represent.represent("focus", datos);
+                changeLayoutPagination();
             });
             
         }
     }
+
+
+    let addListenersSort2 = () => {
+        document.getElementById("ordenar-mayor").addEventListener("click", async (e)=>{
+            let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
+            datos = await ajax.todo();
+            datos = ordenar(foo, datos);
+            paginacion.callback=allDataRepresentation;
+            paginacion.clickSimulation();
+        });
+    
+        document.getElementById("ordenar-menor").addEventListener("click", async (e)=>{
+            let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
+            datos = await ajax.todo();
+            datos = ordenar(foo, datos, false);
+            paginacion.clickSimulation();
+        });
+    }
+    addListenersSort2();
 
 
 
@@ -151,22 +192,17 @@ window.onload = ()=>{
         let datos = await ajax.parte(datoAct, cantDatos);
         represent.represent(typeRepresentation, datos);
         changeRepresent(datos);
-        prueba();
+        addListenersFocusBtns()
         
     }
     
-    let allDataRepresentation = (datoAct, cantDatos) =>{
+    function allDataRepresentation (datoAct, cantDatos){
         let data = datos.slice(datoAct, datoAct+cantDatos);
         represent.represent(typeRepresentation,datos.slice(datoAct, datoAct+cantDatos))
         changeRepresent(data);
+        addListenersFocusBtns();
     }
-    
-    //Esperamos a recuperar todos los datos para poder hacer cosas
-    async function recuperarTodosDatos(){
-        datos = await ajax.todo();
-        paginacion.callback=allDataRepresentation;
-        addListenersSort();
-    }
+
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- MAIN ^-^-^-^-^-^-^-^-^-^-^-^-^- */
     paginacion.clickSimulation();

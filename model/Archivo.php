@@ -7,7 +7,6 @@
             $query = "SELECT * FROM ccaa LIMIT $inicio, $limit;";
             $bd = BD::conectar();
             return $bd->consultar($query)->recuperarTodo();
-
         }
         
         public static function obtenerTodo(){
@@ -17,9 +16,15 @@
         }
 
         public static function seleccion($target, $test){
-            $query = "SELECT $test FROM ccaa WHERE ccaa_iso='$target'";
+            $query = "SELECT fecha,$test,ccaa_iso AS iso FROM ccaa WHERE ccaa_iso='$target'";
             $bd = BD::conectar();
-            //return $query;
             return $bd->consultar($query)->recuperarTodo();
         }
+
+        public static function isos(){
+            $query = "SELECT DISTINCT ccaa_iso FROM ccaa"; 
+            $bd = BD::conectar();
+            return $bd->consultar($query)->recuperarTodo();
+        }
+
     }

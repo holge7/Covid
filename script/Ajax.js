@@ -44,4 +44,9 @@ export class Ajax{
         return await this.realizarPeticion("GET", peti);
     }
 
+    async isos(){
+        let peti = `index.php?mod=archivo&met=isos`;
+        return await this.realizarPeticion("GET", peti);
+    }
+
 }
