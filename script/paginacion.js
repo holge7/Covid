@@ -44,6 +44,15 @@ export class Paginacion{
     }
 
     /**
+     * Makes a simulation click on the button 1
+     */
+    clickSimulation(){
+        this.currentData=0;
+        this.offsetPage=0;
+        this.callback(this.currentData, this.amoutDataPage);
+    }
+
+    /**
      * Create the btns to navigate between the differents pages
      * 
      * @returns {Array} with the differents buttons
@@ -53,7 +62,7 @@ export class Paginacion{
 
         for (let i = this.currentData; i < this.currentData+this.viewablePages; i++) {
             let li = createDom({element:"li", clas:["page-item", "page"]});
-            let btn = createDom({element:"button", clas:["page-link"], content:i});
+            let btn = createDom({element:"button", clas:["page-link"], content:i+1});//+1 for it to start in number 1 and not  0
             
             //When we do click in any btn, the current data is actualizate and the callback
             //is ejecute with the new numbers to limit

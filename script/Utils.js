@@ -2,12 +2,12 @@ let bubble = (datos,tipoPrueba,orden) => {
     for (let i = 0; i < datos.length; i++) {
         for (let j = 0; j < datos.length; j++) {
             if (orden) {
-                if (datos[i].tipoPrueba > datos[j].tipoPrueba) {
+                if (datos[i][tipoPrueba] > datos[j][tipoPrueba]) {
                     //Hacemos swap de las posiciones del array
                     [datos[i],datos[j]] = [datos[j],datos[i]];
                 }
             }else{
-                if (datos[i].tipoPrueba < datos[j].tipoPrueba){
+                if (datos[i][tipoPrueba] < datos[j][tipoPrueba]){
                     //Hacemos swap de las posiciones del array
                     [datos[i],datos[j]] = [datos[j],datos[i]];
                 }
@@ -33,9 +33,9 @@ let seleccion = (datos, tipoPrueba,orden) =>{
         pequenio = i;
         for (let j = i; j < datos.length; j++) {
             if (orden){
-                if (datos[pequenio].tipoPrueba < datos[j].tipoPrueba) pequenio = j;
+                if (datos[pequenio][tipoPrueba] < datos[j][tipoPrueba]) pequenio = j;
             }else{                    
-                if (datos[pequenio].tipoPrueba > datos[j].tipoPrueba) pequenio = j;
+                if (datos[pequenio][tipoPrueba] > datos[j][tipoPrueba]) pequenio = j;
             }
         }
         //Hacemos un swap de las posiciones del array
@@ -50,11 +50,11 @@ let insercion = (datos, tipoPrueba,orden) => {
     for (let i =0; i < datos.length; i++) { 
         temp = datos[i]; 
         if (orden) {
-            for (j = i - 1; j >= 0 && datos[j] < temp.tipoPrueba; j--) { 
+            for (j = i - 1; j >= 0 && datos[j] < temp[tipoPrueba]; j--) { 
                 datos[j + 1] = datos[j]; 
             } 
         }else{
-            for (j = i - 1; j >= 0 && datos[j] > temp.tipoPrueba; j--) { 
+            for (j = i - 1; j >= 0 && datos[j] > temp[tipoPrueba]; j--) { 
                 datos[j + 1] = datos[j]; 
             } 
         }
@@ -63,7 +63,7 @@ let insercion = (datos, tipoPrueba,orden) => {
     return datos;
 }
 
-let createDom = ({element, clas=undefined, atributes=undefined, content=undefined}) => {
+let createDom = ({element, clas=undefined, atributes=undefined, content=undefined, listener=undefined}) => {
     let e = document.createElement(element)
     if (clas) e.classList.add(...clas);
     if (atributes) {
@@ -72,6 +72,11 @@ let createDom = ({element, clas=undefined, atributes=undefined, content=undefine
         }
     }
     if (content) e.textContent+=content;
+    if (listener) {
+        e.addEventListener(listener.type, ()=>{
+            listener.callback()
+        });
+    }
     return e
 }
 

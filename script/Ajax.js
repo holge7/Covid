@@ -34,9 +34,14 @@ export class Ajax{
     }
 
     async parte(inicio, limit){
-        let peti = `index.php?mod=archivo&met=obtenerRango&inicio=${inicio}&limit=${limit}`
+        let peti = `index.php?mod=archivo&met=obtenerRango&param1=${inicio}&param2=${limit}`
         //console.log(peti)
         return await this.realizarPeticion("GET", peti)
+    }
+
+    async seleccion(target, test){
+        let peti = `index.php?mod=archivo&met=seleccion&param1=${target}&param2=${test}`;
+        return await this.realizarPeticion("GET", peti);
     }
 
 }

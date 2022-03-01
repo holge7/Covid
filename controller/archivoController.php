@@ -12,4 +12,8 @@
         public function obtenerRango($inicio, $limit){
             echo json_encode(Archivo::obtenerRango($inicio, $limit));
         }
+
+        public function seleccion($target, $test){
+            echo json_encode(Archivo::seleccion($target, $test));
+        }
     }

@@ -139,18 +139,7 @@ export class Represent{
         });
     }
 
-
-    changeChar(type){
-        //console.log(this.myChart.options)
-        // this.myChart["_metasets"].map((e)=>{
-        //     e["type"] = type;
-        //     console.log(e["type"])
-        // })
-        // console.log(this.myChart["_metasets"])
-        // this.myChart.update();
-
-    }
-
+    
 
     /**
      * Represents the data in a format of table
@@ -187,11 +176,18 @@ export class Represent{
                         
                         //Part of numeric data
                         aux = key2.split("_");
-                        divDatos.appendChild(createDom({element:"p", clas:["me-3", "px-3", "py-1", "rounded","btn-"+colors[color]], content:aux[aux.length-1]+" : "+data[key][key2]}))
+                        divDatos.appendChild(createDom({
+                            element:"button", 
+                            clas:["me-3", "px-3", "py-1", "rounded","btn-"+colors[color], "represent"], 
+                            atributes:{metadata:data[key]["ccaa_iso"]+"/"+key2},
+                            content:aux[aux.length-1]+" : "+data[key][key2]}))
                         color++;
                     }else{
                         aux = key2.split("_");
-                        divDatos.appendChild(createDom({element:"p", clas:["me-3", "px-3", "py-1", "rounded"], content:"TOTAL: "+data[key][key2]}))
+                        divDatos.appendChild(createDom({
+                            element:"button", 
+                            clas:["me-3", "px-3", "py-1", "rounded"], 
+                            content:"TOTAL: "+data[key][key2]}))
                     }
                 }
             }
