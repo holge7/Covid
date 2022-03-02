@@ -3,34 +3,43 @@
     class Archivo{
         public function __construct(){}
 
-        public static function obtenerRango($inicio, $limit){
-            $query = "SELECT *,ccaa_iso AS iso FROM ccaa LIMIT $inicio, $limit;";
+        public static function obtenerRango($nameFile, $inicio, $limit){
+            $iso = $nameFile.'_iso';
+            $query = "SELECT *,$iso AS iso FROM $nameFile LIMIT $inicio, $limit;";
             $bd = BD::conectar();
             return $bd->consultar($query)->recuperarTodo();
         }
         
-        public static function obtenerTodo(){
-            $query = "SELECT *,ccaa_iso AS iso FROM ccaa";
+        public static function obtenerTodo($nameFile){
+            $iso = $nameFile.'_iso';
+            $query = "SELECT *,$iso AS iso FROM $nameFile";
             $bd = BD::conectar();
             return $bd->consultar($query)->recuperarTodo();
         }
 
-        public static function seleccion($target, $test){
-            $query = "SELECT fecha,$test,ccaa_iso AS iso FROM ccaa WHERE ccaa_iso='$target'";
+        public static function seleccion($nameFile, $target, $test){
+            $iso = $nameFile.'_iso';
+            $query = "SELECT fecha,$test,$iso AS iso FROM $nameFile WHERE $iso='$target'";
             $bd = BD::conectar();
             return $bd->consultar($query)->recuperarTodo();
         }
 
-        public static function isos(){
-            $query = "SELECT DISTINCT ccaa_iso AS iso FROM ccaa"; 
+        public static function isos($nameFile){
+            $iso = $nameFile.'_iso';
+            $query = "SELECT DISTINCT $iso AS iso FROM $nameFile"; 
             $bd = BD::conectar();
             return $bd->consultar($query)->recuperarTodo();
         }
 
-        public static function historial($iso){
-            $query = "SELECT *, ccaa_iso AS iso FROM ccaa WHERE ccaa_iso = '$iso'";
+        public static function historial($nameFile, $iso){
+            $isoName = $nameFile.'_iso';
+            $query = "SELECT *, $isoName AS iso FROM $nameFile WHERE $isoName = '$iso'";
             $bd = BD::conectar();
             return $bd->consultar($query)->recuperarTodo();
+        }
+
+        public static function subir($fichero){
+            return $fichero == null;
         }
 
     }

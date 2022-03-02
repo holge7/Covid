@@ -121,7 +121,7 @@ export class Represent{
         });
 
         //creating the label with iso cod
-        let label = datas.map(dat => dat.ccaa_iso);
+        let label = datas.map(dat => dat.iso);
     
         //creating the datasets
         let dataSet = [];
@@ -261,7 +261,7 @@ export class Represent{
 
         for (const key in data) {
             divPadre = createDom({element:"div", clas:["row", "align-items-center", "dato"]});
-            p = createDom({element:"p", clas:["col-2"], content: data[key]["ccaa_iso"]+"-"+data[key]["fecha"]});
+            p = createDom({element:"p", clas:["col-2"], content: data[key]["iso"]+"-"+data[key]["fecha"]});
             divBarra = createDom({element:"div", clas:["col-10", "progress"]});
             divDatos = createDom({element:"div", clas:["d-flex", "justify-content-end", "align-items-center"]});
             color=0;
@@ -285,14 +285,15 @@ export class Represent{
                         divDatos.appendChild(createDom({
                             element:"button", 
                             clas:["me-3", "px-3", "py-1", "rounded","btn-"+colors[color], "represent"], 
-                            atributes:{metadata:data[key]["ccaa_iso"]+"/"+key2},
+                            atributes:{metadata:data[key]["iso"]+"/"+key2},
                             content:aux[aux.length-1]+" : "+data[key][key2]}))
                         color++;
                     }else{
                         aux = key2.split("_");
                         divDatos.appendChild(createDom({
                             element:"button", 
-                            clas:["me-3", "px-3", "py-1", "rounded"], 
+                            clas:["me-3", "px-3", "py-1", "rounded", "represent"], 
+                            atributes:{metadata:data[key]["iso"]+"/"+key2},
                             content:"TOTAL: "+data[key][key2]}))
                     }
                 }

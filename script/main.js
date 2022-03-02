@@ -11,6 +11,19 @@ window.onload = ()=>{
 
     let datos;
     let typeRepresentation = "table";
+    let nameFile = "provincia";
+
+    /* ^-^-^-^-^-^-^-^-^-^-^-^-^- BD  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
+
+    //Cargamos un fichero en la bd
+    document.getElementById("file").addEventListener("change", async (e)=>{
+        let file = await e.target.files[0].text();
+    })
+
+    //Seleccionar bd
+    document.getElementById("boton-bd").addEventListener("click",()=>{
+        document.getElementById("boton-bd")
+    });
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- PAGINATION  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
 
@@ -19,23 +32,10 @@ window.onload = ()=>{
     let pages = document.getElementById("paginas");
     let paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
 
-    let restablecerDatos = () =>{
+    let restablecerDatos = (bool = false) =>{
         paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
-        paginacion.clickSimulation();
+        paginacion.clickSimulation(bool);
     }
-
-    let cambiarCantidadPaginacion = () =>{
-        document.getElementById("ajustar-datos-pagina").addEventListener("click", ()=>{
-            let value = parseInt(document.getElementById("datos-pagina").value);
-            if (!isNaN(value)) {
-                if (value>=1 || value<=19) {
-                    paginacion.amoutDataPage=value;
-                    paginacion.clickSimulation(true);
-                }
-            }
-        })
-    }
-    cambiarCantidadPaginacion();
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- REPRESENTATION  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
 
@@ -67,15 +67,36 @@ window.onload = ()=>{
 
     }
 
+    let test;
+    //Añade listeners a los botones del formato tabla
+    function addListenersFocusBtns(){
+        let btns = document.querySelectorAll(".represent");
+        let target;
+        for (let i = 0; i < btns.length; i++) {
+
+            btns[i].addEventListener("click", async (e)=>{
+                target = e.target.getAttribute("metadata").split("/");
+                test = target[1];
+                target = target[0];
+                datos = [await ajax.seleccion(nameFile,target, test)];
+                represent.represent("focus", datos);
+                changeLayoutPagination();
+                addOptionsSelectShow(document.getElementById("mostrar-datos-de-select"));
+            });
+            
+        }
+    }
+
+    //Añade listeners para comparar 1 test de diferentes isos
     let addOptionsSelectCompare = async(select) => {
-        let isos = await ajax.isos();
+        let isos = await ajax.isos(nameFile);
         let option;
         isos.map((iso)=>{
             for (const key in iso) {
                 option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
                 select.appendChild(option);
                 option.addEventListener("click", async(e)=>{
-                    let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
+                    let newData = await ajax.seleccion(nameFile,e.target.getAttribute("value"), test);
                     datos.push(newData)
                     represent.represent("focus", datos);
                 });
@@ -83,17 +104,17 @@ window.onload = ()=>{
         });
     }
 
+    //Añade listeners para mostrar todos los casos de 1 iso
     let addOptionsSelectShow = async(select) => {
-        let isos = await ajax.isos();
+        let isos = await ajax.isos(nameFile);
         let option;
         isos.map((iso)=>{
             for (const key in iso) {
                 option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
                 select.appendChild(option);
                 option.addEventListener("click", async(e)=>{
-                    let newData = await ajax.historial(e.target.getAttribute("value"));
+                    let newData = await ajax.historial(nameFile,e.target.getAttribute("value"));
                     represent.represent("line", newData);
-                    changeLayoutPagination();
                 });
             }
         });
@@ -117,25 +138,6 @@ window.onload = ()=>{
                 paginacion.clickSimulation();
             })
             await addOptionsSelectCompare(document.getElementById("comparar"));
-        }
-    }
-
-    let test;
-    function addListenersFocusBtns(){
-        let btns = document.querySelectorAll(".represent");
-        let target;
-        for (let i = 0; i < btns.length; i++) {
-
-            btns[i].addEventListener("click", async (e)=>{
-                target = e.target.getAttribute("metadata").split("/");
-                test = target[1];
-                target = target[0];
-                datos = [await ajax.seleccion(target, test)];
-                represent.represent("focus", datos);
-                changeLayoutPagination();
-                addOptionsSelectShow();
-            });
-            
         }
     }
 
@@ -197,7 +199,7 @@ window.onload = ()=>{
     let addListenersSort = () => {
         document.getElementById("ordenar-mayor").addEventListener("click", async (e)=>{
             let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
-            datos = await ajax.todo();
+            datos = await ajax.todo(nameFile);
             datos = ordenar(foo, datos);
             paginacion.callback=allDataRepresentation;
             paginacion.clickSimulation();
@@ -205,7 +207,7 @@ window.onload = ()=>{
     
         document.getElementById("ordenar-menor").addEventListener("click", async (e)=>{
             let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
-            datos = await ajax.todo();
+            datos = await ajax.todo(nameFile);
             datos = ordenar(foo, datos, false);
             paginacion.clickSimulation();
         });
@@ -218,7 +220,8 @@ window.onload = ()=>{
 
     async function recuperarParteDatos(datoAct, cantDatos){
         //Una vez recibido los datos
-        let datos = await ajax.parte(datoAct, cantDatos);
+        let datos = await ajax.parte(nameFile, datoAct, cantDatos);
+
         represent.represent(typeRepresentation, datos);
         changeRepresent(datos);
         addListenersFocusBtns();
@@ -244,7 +247,7 @@ window.onload = ()=>{
     });
 
 
-    
+    //cambiarCantidadPaginacion();
     addListenersSort();
     paginacion.clickSimulation();
     

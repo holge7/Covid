@@ -5,23 +5,28 @@
 
         public function __construct(){}
 
-        public function registros(){
-            echo json_encode(Archivo::obtenerTodo());
+        public function registros($nameFile){
+            echo json_encode(Archivo::obtenerTodo($nameFile));
         }
         
-        public function obtenerRango($inicio, $limit){
-            echo json_encode(Archivo::obtenerRango($inicio, $limit));
+        public function obtenerRango($nameFile, $inicio, $limit){
+            echo json_encode(Archivo::obtenerRango($nameFile, $inicio, $limit));
         }
 
-        public function seleccion($target, $test){
-            echo json_encode(Archivo::seleccion($target, $test));
+        public function seleccion($nameFile, $target, $test){
+            //echo json_encode("JO NO VA");
+            echo json_encode(Archivo::seleccion($nameFile, $target, $test));
         }
 
-        public function isos(){
-            echo json_encode(Archivo::isos());
+        public function isos($nameFile){
+            echo json_encode(Archivo::isos($nameFile));
         }
     
-        public function historial($iso){
-            echo json_encode(Archivo::historial($iso));
+        public function historial($nameFile, $iso){
+            echo json_encode(Archivo::historial($nameFile, $iso));
+        }
+
+        public function subir($fichero){
+            echo json_encode(Archivo::subir($fichero));
         }
     }
