@@ -27,4 +27,10 @@
             return $bd->consultar($query)->recuperarTodo();
         }
 
+        public static function historial($iso){
+            $query = "SELECT *, ccaa_iso AS iso FROM ccaa WHERE ccaa_iso = '$iso'";
+            $bd = BD::conectar();
+            return $bd->consultar($query)->recuperarTodo();
+        }
+
     }

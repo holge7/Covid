@@ -20,4 +20,8 @@
         public function isos(){
             echo json_encode(Archivo::isos());
         }
+    
+        public function historial($iso){
+            echo json_encode(Archivo::historial($iso));
+        }
     }

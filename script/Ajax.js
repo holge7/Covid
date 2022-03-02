@@ -49,4 +49,9 @@ export class Ajax{
         return await this.realizarPeticion("GET", peti);
     }
 
+    async historial(iso){
+        let peti = `index.php?mod=archivo&met=historial&param1=${iso}`;
+        return await this.realizarPeticion("GET", peti);
+    }
+
 }

@@ -46,9 +46,11 @@ export class Paginacion{
     /**
      * Makes a simulation click on the button 1
      */
-    clickSimulation(){
-        this.currentData=0;
-        this.offsetPage=0;
+    clickSimulation(bool = false){
+        if (!bool) {
+            this.currentData=0;
+            this.offsetPage=0;
+        }
         this.callback(this.currentData, this.amoutDataPage);
     }
 

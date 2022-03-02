@@ -19,6 +19,24 @@ window.onload = ()=>{
     let pages = document.getElementById("paginas");
     let paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
 
+    let restablecerDatos = () =>{
+        paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
+        paginacion.clickSimulation();
+    }
+
+    let cambiarCantidadPaginacion = () =>{
+        document.getElementById("ajustar-datos-pagina").addEventListener("click", ()=>{
+            let value = parseInt(document.getElementById("datos-pagina").value);
+            if (!isNaN(value)) {
+                if (value>=1 || value<=19) {
+                    paginacion.amoutDataPage=value;
+                    paginacion.clickSimulation(true);
+                }
+            }
+        })
+    }
+    cambiarCantidadPaginacion();
+
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- REPRESENTATION  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
 
     let cavas = document.getElementById("lienzo");
@@ -49,6 +67,78 @@ window.onload = ()=>{
 
     }
 
+    let addOptionsSelectCompare = async(select) => {
+        let isos = await ajax.isos();
+        let option;
+        isos.map((iso)=>{
+            for (const key in iso) {
+                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
+                select.appendChild(option);
+                option.addEventListener("click", async(e)=>{
+                    let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
+                    datos.push(newData)
+                    represent.represent("focus", datos);
+                });
+            }
+        });
+    }
+
+    let addOptionsSelectShow = async(select) => {
+        let isos = await ajax.isos();
+        let option;
+        isos.map((iso)=>{
+            for (const key in iso) {
+                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
+                select.appendChild(option);
+                option.addEventListener("click", async(e)=>{
+                    let newData = await ajax.historial(e.target.getAttribute("value"));
+                    represent.represent("line", newData);
+                    changeLayoutPagination();
+                });
+            }
+        });
+    }
+    
+    let changeLayoutPagination = async() => {
+        let pages = document.getElementById("paginas");
+        let focus = document.getElementById("focus");
+        //Ponemos paginacion
+        if (pages.classList.contains("d-none")) {
+            pages.classList.remove("d-none");
+            focus.classList.add("d-none");
+            restablecerDatos();
+        }
+        //Quitamos paginacion
+        else{
+            pages.classList.add("d-none");
+            focus.classList.remove("d-none")
+            document.getElementById("focus-off").addEventListener("click", ()=>{
+                changeLayoutPagination();
+                paginacion.clickSimulation();
+            })
+            await addOptionsSelectCompare(document.getElementById("comparar"));
+        }
+    }
+
+    let test;
+    function addListenersFocusBtns(){
+        let btns = document.querySelectorAll(".represent");
+        let target;
+        for (let i = 0; i < btns.length; i++) {
+
+            btns[i].addEventListener("click", async (e)=>{
+                target = e.target.getAttribute("metadata").split("/");
+                test = target[1];
+                target = target[0];
+                datos = [await ajax.seleccion(target, test)];
+                represent.represent("focus", datos);
+                changeLayoutPagination();
+                addOptionsSelectShow();
+            });
+            
+        }
+    }
+
 
 
 
@@ -68,8 +158,6 @@ window.onload = ()=>{
             }
         }
     }
-
-
 
     //La propiedad orden va a ser si queremos que se ordene de < o de >
     //false = >
@@ -106,80 +194,7 @@ window.onload = ()=>{
         }
     }
 
-    let addOptionsSelectCompare = async(select) => {
-        let isos = await ajax.isos();
-        let option;
-        isos.map((iso)=>{
-            for (const key in iso) {
-                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
-                select.appendChild(option);
-                option.addEventListener("click", async(e)=>{
-                    let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
-                    datos.push(newData)
-                    represent.represent("focus", datos);
-                });
-            }
-        });
-    }
-
-    let addOptionsSelectShow = async(select) => {
-        let isos = await ajax.isos();
-        let option;
-        isos.map((iso)=>{
-            for (const key in iso) {
-                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
-                select.appendChild(option);
-                option.addEventListener("click", async(e)=>{
-                    //Tengo que crear un nuevo metodo ajax, para traerme todos los datos de una iso
-                    let newData = await ajax.seleccion(e.target.getAttribute("value"), test);
-                    console.log(newData);
-                    represent.represent("focus", newData);
-                });
-            }
-        });
-    }
-    
-    let changeLayoutPagination = async() => {
-        let pages = document.getElementById("paginas");
-        let focus = document.getElementById("focus");
-        //Ponemos paginacion
-        if (pages.classList.contains("d-none")) {
-            pages.classList.remove("d-none");
-            focus.classList.add("d-none");
-        }
-        //Quitamos paginacion
-        else{
-            pages.classList.add("d-none");
-            focus.classList.remove("d-none")
-            document.getElementById("focus-off").addEventListener("click", ()=>{
-                changeLayoutPagination();
-                paginacion.clickSimulation();
-            })
-            await addOptionsSelectCompare(document.getElementById("comparar"));
-        }
-    }
-
-
-    let test;
-    function addListenersFocusBtns(){
-        let btns = document.querySelectorAll(".represent");
-        let target;
-        for (let i = 0; i < btns.length; i++) {
-
-            btns[i].addEventListener("click", async (e)=>{
-                target = e.target.getAttribute("metadata").split("/");
-                test = target[1];
-                target = target[0];
-                datos = [await ajax.seleccion(target, test)];
-                represent.represent("focus", datos);
-                changeLayoutPagination();
-            });
-            
-        }
-    }
-
-
-    let addListenersSort2 = () => {
+    let addListenersSort = () => {
         document.getElementById("ordenar-mayor").addEventListener("click", async (e)=>{
             let foo = buscarRadio(document.getElementsByClassName("form-check-input"));
             datos = await ajax.todo();
@@ -195,6 +210,11 @@ window.onload = ()=>{
             paginacion.clickSimulation();
         });
     }
+
+
+    /* ^-^-^-^-^-^-^-^-^-^-^-^-^- MANEJO DE DATOS ^-^-^-^-^-^-^-^-^-^-^-^-^- */
+
+
 
     async function recuperarParteDatos(datoAct, cantDatos){
         //Una vez recibido los datos
@@ -225,7 +245,7 @@ window.onload = ()=>{
 
 
     
-    addListenersSort2();
+    addListenersSort();
     paginacion.clickSimulation();
     
 }
