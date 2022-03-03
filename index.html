@@ -42,10 +42,6 @@
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="seleccion" checked>
                         <label class="form-check-label fw-bold" for="flexRadioDefault2">Seleccion</label>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="insercion" checked>
-                        <label class="form-check-label fw-bold" for="flexRadioDefault2">insercion</label>
-                    </div>
                 </form>
                 
                 <h4 class="fw-bold pt-5">Ordenar por:</h4>
@@ -92,18 +88,18 @@
                 </div>
                 <br>
                 <div class="d-flex">
-                    <select id="seleccion-bd" class="w-50">
-                        <option value="provincias">Provincias</option>
+                    <select id="select-borrar" class="w-50">
+                        <option value="provincia">Provincias</option>
                         <option value="ccaa">Comunidades autonomas</option>
                     </select>
-                    <button id="boton-bd" class="btn btn-danger">Borrar</button>
+                    <button id="borrar-bd" class="btn btn-danger">Borrar</button>
                 </div>
                 <div class="d-flex">
-                    <select id="" class="w-50">
-                        <option value="provincias">Provincias</option>
+                    <select id="seleccion-bd" class="w-50">
+                        <option value="provincia">Provincias</option>
                         <option value="ccaa">Comunidades autonomas</option>
                     </select>
-                    <button class="btn btn-primary">Mostarar</button>
+                    <button id="boton-bd" class="btn btn-primary">Mostarar</button>
                 </div>
 
             </div>
@@ -113,7 +109,6 @@
                 <h4 class="fw-bold">REPRESENTACION</h4>
                 <button class="btn btn-outline-primary btn-represent-table" data-tipo="tabla">Tabla</button>
                 <button class="btn btn-outline-primary btn-represent-chart" data-tipo="bar">Barras</button>
-                <button class="btn btn-outline-primary btn-represent-chart" data-tipo="doughnut">Doughnut</button>
                 <button class="btn btn-outline-primary btn-represent-chart" data-tipo="line">Lineas</button>
                 <button class="btn btn-outline-primary btn-represent-chart" data-tipo="radar">Radar</button>                
             </div>
@@ -121,7 +116,82 @@
             <!-- VER DATOS DE -->
             <div class="p-2 w-100 d-flex flex-column justify-content-between">
                 <h4 class="fw-bold">Mostrar datos de:</h4>
-                <select class="form-select" id="mostrar-datos-de-select"></select>
+                <select class="form-select d-none" id="provincias">
+                    <option value="A">Alicante</option>
+                    <option value="AB">Albacete</option>
+                    <option value="AL">Almeria</option>
+                    <option value="AV">Avila</option>
+                    <option value="B">Barcelona</option>
+                    <option value="BA">Badajoz</option>
+                    <option value="BI">Bilbao</option>
+                    <option value="BU">Burgos</option>
+                    <option value="C">La Coruña/A Coruña</option>
+                    <option value="CA">Cadiz</option>
+                    <option value="CC">Caceres</option>
+                    <option value="CE">Ceuta</option>
+                    <option value="CO">Cordoba</option>
+                    <option value="CR">Cuidad Real</option>
+                    <option value="CS">Castellon/Castello</option>
+                    <option value="CU">Cuenca</option>
+                    <option value="GC">Las Palmas de Gran Canaria</option>
+                    <option value="GI">Gerona/Girona</option>
+                    <option value="GR">Granada</option>
+                    <option value="GU">Guadalajara</option>
+                    <option value="H">Huelva</option>
+                    <option value="HU">Huesca</option>
+                    <option value="J">Jaen</option>
+                    <option value="L">Lerida/LLeida</option>
+                    <option value="LE">Elon</option>
+                    <option value="LO">Logroño</option>
+                    <option value="LU">Lugo</option>
+                    <option value="M">Madrid</option>
+                    <option value="MA">Malaga</option>
+                    <option value="ME">Melilla</option>
+                    <option value="MU">Murcia</option>
+                    <option value="NA">Navarra/Nafarroa</option>
+                    <option value="O">Oviedo</option>
+                    <option value="OR">Orense/Ourense</option>
+                    <option value="P">Palencia</option>
+                    <option value="PM">Palma de Mallorca</option>
+                    <option value="PO">Pontevedra</option>
+                    <option value="S">Santander</option>
+                    <option value="SA">Salamanca</option>
+                    <option value="SE">Sevilla</option>
+                    <option value="SG">Segovia</option>
+                    <option value="SO">Soria</option>
+                    <option value="SS">San Sebastian</option>
+                    <option value="T">Tarragona</option>
+                    <option value="TE">Teruel</option>
+                    <option value="TF">Santa Cruz de Tenerife</option>
+                    <option value="TO">Toledo</option>
+                    <option value="V">Valencia</option>
+                    <option value="VA">Valladolid</option>
+                    <option value="VI">Vizcaya</option>
+                    <option value="Z">Zaragoza</option>
+                    <option value="ZA">Zamora</option>
+                </select>
+
+                <select class="form-select" id="ccaa">
+                    <option value="AN">Andalucia</option>
+                    <option value="AR">Aragon</option>
+                    <option value="AS">Asturias</option>
+                    <option value="CB">Cantabria</option>
+                    <option value="CE">Ceuta</option>
+                    <option value="CL">Castilla y Leon</option>
+                    <option value="CM">Castilla y la Mancha</option>
+                    <option value="CN">Canarias</option>
+                    <option value="CT">Cataluña</option>
+                    <option value="EX">Extremadura</option>
+                    <option value="GA">Galicia</option>
+                    <option value="IB">Islas Baleares</option>
+                    <option value="MC">Region de Murcia</option>
+                    <option value="MD">Comunidad de Madrid</option>
+                    <option value="ML">Melilla</option>
+                    <option value="NC">Comunidad Foral de Navarra</option>
+                    <option value="PV">Pais Vasco</option>
+                    <option value="RI">La Rioja</option>
+                    <option value="VC">Comunidad Valenciana</option>
+                </select>
             </div>
         </div>
         </div>

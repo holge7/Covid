@@ -160,7 +160,7 @@ export class Represent{
             datas[i].map((data)=>{
                 for (const key in data) {
                     //If it is statistical data and it is not the amount of all
-                    if (key.match(/^num.*/) && key!='num_casos') {
+                    if (key.match(/^num.*/)) {
                         //Try to enter the data and if it is the first time we do it
                         // we haver to create it before
                         try {

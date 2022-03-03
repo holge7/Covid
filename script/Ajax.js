@@ -65,4 +65,9 @@ export class Ajax{
         return await this.realizarPeticion("POST", peti, fichero);
     }
 
+    async borrar(nameFile){
+        let peti = `index.php?mod=Archivo&met=borrar&param0=${nameFile}`
+        return await this.realizarPeticion("GET", peti);
+    }
+
 }

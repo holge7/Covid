@@ -99,7 +99,12 @@ export class Paginacion{
 
         //Look in which direction we want to go
         if (direction) this.offsetPage += this.viewablePages;
-        else this.offsetPage -= this.viewablePages;
+        else{
+            if (this.offsetPage-this.viewablePages>=0) {
+                this.offsetPage -= this.viewablePages;
+                
+            }
+        } 
         
         this.currentData = this.offsetPage;
 

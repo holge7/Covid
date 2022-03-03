@@ -14,7 +14,6 @@
         }
 
         public function seleccion($nameFile, $target, $test){
-            //echo json_encode("JO NO VA");
             echo json_encode(Archivo::seleccion($nameFile, $target, $test));
         }
 
@@ -28,5 +27,9 @@
 
         public function subir($fichero){
             echo json_encode(Archivo::subir($fichero));
+        }
+
+        public function borrar($fichero){
+            echo json_encode(Archivo::borrar($fichero));
         }
     }

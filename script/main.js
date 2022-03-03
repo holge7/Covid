@@ -11,18 +11,40 @@ window.onload = ()=>{
 
     let datos;
     let typeRepresentation = "table";
-    let nameFile = "provincia";
+    let nameFile = "ccaa";
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- BD  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
 
     //Cargamos un fichero en la bd
     document.getElementById("file").addEventListener("change", async (e)=>{
         let file = await e.target.files[0].text();
+        console.log(await ajax.subirFichero(file));
+        location.reload();
+    })
+
+    //Borrar bd
+    document.getElementById("borrar-bd").addEventListener("click", async()=>{
+        let borrar = document.getElementById("select-borrar").value;
+        await ajax.borrar(borrar);
+        location.reload();
     })
 
     //Seleccionar bd
-    document.getElementById("boton-bd").addEventListener("click",()=>{
-        document.getElementById("boton-bd")
+    document.getElementById("boton-bd").addEventListener("click", async()=>{
+        let provincias = document.getElementById("provincias");
+        let ccaa = document.getElementById("ccaa");
+        let select = document.getElementById("seleccion-bd")
+        nameFile = select.value;
+        if (nameFile=="provincia") {
+            addOptionsSelectShow(provincias);
+            provincias.classList.remove("d-none");
+            ccaa.classList.add("d-none")
+        }else{
+            addOptionsSelectShow(ccaa);
+            ccaa.classList.remove("d-none");
+            provincias.classList.add("d-none");
+        }
+        restablecerDatos();
     });
 
     /* ^-^-^-^-^-^-^-^-^-^-^-^-^- PAGINATION  ^-^-^-^-^-^-^-^-^-^-^-^-^- */
@@ -33,7 +55,7 @@ window.onload = ()=>{
     let paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
 
     let restablecerDatos = (bool = false) =>{
-        paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
+        let paginacion = new Paginacion(nextBtn, prevBtn, pages, recuperarParteDatos);
         paginacion.clickSimulation(bool);
     }
 
@@ -81,7 +103,6 @@ window.onload = ()=>{
                 datos = [await ajax.seleccion(nameFile,target, test)];
                 represent.represent("focus", datos);
                 changeLayoutPagination();
-                addOptionsSelectShow(document.getElementById("mostrar-datos-de-select"));
             });
             
         }
@@ -89,6 +110,7 @@ window.onload = ()=>{
 
     //Añade listeners para comparar 1 test de diferentes isos
     let addOptionsSelectCompare = async(select) => {
+        select.innerHTML=""
         let isos = await ajax.isos(nameFile);
         let option;
         isos.map((iso)=>{
@@ -104,20 +126,16 @@ window.onload = ()=>{
         });
     }
 
+    
     //Añade listeners para mostrar todos los casos de 1 iso
     let addOptionsSelectShow = async(select) => {
-        let isos = await ajax.isos(nameFile);
-        let option;
-        isos.map((iso)=>{
-            for (const key in iso) {
-                option = createDom({element:"option", atributes:{"value":iso[key]}, content:iso[key]});
-                select.appendChild(option);
-                option.addEventListener("click", async(e)=>{
-                    let newData = await ajax.historial(nameFile,e.target.getAttribute("value"));
-                    represent.represent("line", newData);
-                });
-            }
-        });
+
+        for (let i = 0; i < select.length; i++) {
+            select[i].addEventListener("click", async(e)=>{
+                let newData = await ajax.historial(nameFile,e.target.getAttribute("value"));
+                represent.represent("focus", [newData]);
+            });
+        }
     }
     
     let changeLayoutPagination = async() => {
@@ -225,7 +243,7 @@ window.onload = ()=>{
         represent.represent(typeRepresentation, datos);
         changeRepresent(datos);
         addListenersFocusBtns();
-        addOptionsSelectShow(document.getElementById("mostrar-datos-de-select"));
+        //addOptionsSelectShow();
     }
     
     function allDataRepresentation (datoAct, cantDatos){
@@ -246,8 +264,7 @@ window.onload = ()=>{
         tipoPrueba = e.target.value;
     });
 
-
-    //cambiarCantidadPaginacion();
+    addOptionsSelectShow(document.getElementById("ccaa"))
     addListenersSort();
     paginacion.clickSimulation();
     
