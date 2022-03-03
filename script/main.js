@@ -35,6 +35,7 @@ window.onload = ()=>{
         let ccaa = document.getElementById("ccaa");
         let select = document.getElementById("seleccion-bd")
         nameFile = select.value;
+        console.log(nameFile)
         if (nameFile=="provincia") {
             addOptionsSelectShow(provincias);
             provincias.classList.remove("d-none");

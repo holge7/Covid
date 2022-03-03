@@ -55,10 +55,12 @@
             $tabla = explode(",", $tabla[0])[0];
             $tabla = explode("_", $tabla)[0];
 
+            $iso = $tabla."_iso";
+
             try {
                 //Intentamos crear la tabla
                 $sql = "CREATE TABLE `$tabla` (
-                    `ccaa_iso` varchar(30) NOT NULL,
+                    `$iso` varchar(30) NOT NULL,
                     `fecha` date NOT NULL,
                     `num_casos` int(11) NOT NULL,
                     `num_casos_prueba_pcr` int(11) NOT NULL,

@@ -7,7 +7,7 @@
         private $res;
 
         private function __construct(){
-            $this->conexion = new PDO("mysql:host=localhost;dbname=covitron", "root", "");
+            $this->conexion = new PDO("mysql:host=localhost;dbname=covid", "root", "");
         }
         
         private function __clone(){}
